@@ -4,11 +4,11 @@
 const objectID = require('mongodb').ObjectID;
 const mongoose = require('bluebird').promisifyAll(require('mongoose'));
 const db = mongoose.connection;
-import { config } from '../../../config/env/cut.config.dev'
+import * as CONSTANTS from '../../../../constants/constants';
 import Promise from 'bluebird';
 import Collections from './cut.components.db.mongo.model';
 
-const url = config.mongo;
+const url = CONSTANTS.MONGO_DB_URL;
 connect(url);
 
 export function connect(url) {

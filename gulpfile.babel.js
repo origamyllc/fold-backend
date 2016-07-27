@@ -12,7 +12,12 @@ const relational = require('orm');
 const amqp = require('amqp');
 const path = require('path');
 
-//import * as mongoose from './src/lib/components/db/mongo/mongoose-middleware';
+
+import { devConfig } from  './src/config/env/dev';
+import { integrationConfig } from  './src/config/env/int'
+import { productionConfig } from  './src/config/env/prod'
+import { qaConfig } from  './src/config/env/qa'
+import { stressConfig } from  './src/config/env/stress'
 
 require('babel-register')({
     "presets": ["es2015"]
@@ -27,6 +32,18 @@ gulp.task('set:enviornment', () => {
     if(args.enviornment.NODE_ENV === 'development') {
         process.env.NODE_ENV = 'development';
     }
+    if(args.enviornment.NODE_ENV === 'integration') {
+        process.env.NODE_ENV = 'integration';
+    }
+    if(args.enviornment.NODE_ENV === 'production') {
+        process.env.NODE_ENV = 'production';
+    }
+    if(args.enviornment.NODE_ENV === 'qa') {
+        process.env.NODE_ENV = 'qa';
+    }
+    if(args.enviornment.NODE_ENV === 'stress') {
+        process.env.NODE_ENV = 'stress';
+    }
 });
 
 // start our server and listen for changes
@@ -39,8 +56,24 @@ const config = function getConfiguration () {
     let conf = null;
 
     if (process.env.NODE_ENV === 'development') {
-        conf = require('./config/enviornment/development');
+        conf =  devConfig;
     }
+    if ( process.env.NODE_ENV === 'integration' ){
+        conf = integrationConfig;
+    }
+
+    if ( process.env.NODE_ENV === 'production' ){
+        conf = productionConfig;
+    }
+
+    if ( process.env.NODE_ENV === 'qa' ){
+        conf = qaConfig ;
+    }
+
+    if ( process.env.NODE_ENV === 'stress' ){
+        conf = stressConfig;
+    }
+
 
     return conf;
 }

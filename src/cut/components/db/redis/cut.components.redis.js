@@ -1,8 +1,8 @@
 'use strict';
 
 const redis = require("redis");
-import { config } from '../../../config/env/cut.config.dev'
-let client = redis.createClient(config.redis.db);
+import * as CONSTANTS from '../../../../constants/constants';
+let client = redis.createClient(CONSTANTS.REDIS_SERVER_CONF);
 
 import Promise from 'bluebird';
 
