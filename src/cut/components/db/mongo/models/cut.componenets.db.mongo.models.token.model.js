@@ -17,9 +17,6 @@ const TokenSchema = new Schema({
         accessToken: {
             type: String,
             required: true
-        },
-        type:{
-            type: String
         }
 
     },

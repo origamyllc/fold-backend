@@ -24,7 +24,7 @@ const ClaimsSchema = new Schema({
         applications:[{
             type: String
         }],
-        apiWhiltelist:{
+        api_white_list:{
             type: Schema.Types.Mixed,
             required: true
         }

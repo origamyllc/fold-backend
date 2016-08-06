@@ -6,7 +6,7 @@ let exchange = null;
 let queue = null;
 let queues = {};
 import Promise from 'bluebird';
-import * as CONSTANTS from '../../../../constants/constants';
+import * as CONSTANTS from '../../../constants/constants';
 
 const connection =  amqp.createConnection(CONSTANTS.RABBIT_SERVER_CONF);
 

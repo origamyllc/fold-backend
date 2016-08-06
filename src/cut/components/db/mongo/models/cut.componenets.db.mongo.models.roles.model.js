@@ -20,7 +20,7 @@ const RolesSchema = new Schema({
             required: true
        },
        claims: {
-           type: Schema.Types.Mixed,
+           type:Schema.Types.ObjectId,
            required: true
         }
     },
