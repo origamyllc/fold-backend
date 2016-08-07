@@ -54,11 +54,10 @@ export function seedUsers() {
     return new Promise((resolve) => {
         Users.createAsync(usersArray)
             .then((usersArray) => {
-                //console.log("Seeded Users" + usersArray);
                 resolve(usersArray)
             })
             .catch((err) => {
-                // console.log("Failed to seed Users::Error::" + err);
+                 console.log("Failed to seed Users::Error::" + err);
                 resolve(err);
             });
     });
