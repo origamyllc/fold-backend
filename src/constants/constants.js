@@ -33,5 +33,6 @@ if ( process.env.NODE_ENV === 'stress' ){
 //add constants here
 export const MONGO_DB_URL = config.mongo;
 export const  REDIS_SERVER_CONF = config.redis.db;
+export const  settings = config ;
 
 

@@ -62,10 +62,7 @@ export function getById(model,id){
     return new Promise((resolve) => {
         Collections[model].find({ _id : id },  (err, document) => {
             resolve(document);
-        }).catch((err) => {
-            console.log(err);
-            resolve(err)
-        });;
+        });
     })
 }
 
@@ -73,11 +70,7 @@ export function updateById(model ,id ,data ) {
     return new Promise((resolve) => {
             Collections[model].findByIdAndUpdate( id, { $set: data }, (error, doc) => {
                 resolve( doc );
-            })
-            .catch((err) => {
-                console.log(err);
-                resolve(err)
-            });;
+            });
     });
 }
 
@@ -87,11 +80,7 @@ export function updateByField(model,key,value,data ) {
         const query = JSON.parse('{"'+key+'":"'+value+'"}');
          Collections[model].update(query, data , null, (error ,docs) => {
             resolve(docs);
-         })
-         .catch((err) => {
-                 console.log(err);
-                 resolve(err)
-             });
+         });
     });
 }
 
@@ -117,11 +106,7 @@ export function count(model){
     return new Promise((resolve) => {
         Collections[model].count({}, (err, count) => {
             resolve(count);
-        })
-            .catch((err) => {
-                console.log(err);
-                resolve(err)
-            });;
+        });
     });
 }
 
@@ -131,10 +116,7 @@ export function countFiltered(model,key,value){
         const query = JSON.parse('{"'+key+'":"'+value+'"}');
         Collections[model].count(query,  (err, count) => {
             resolve(count);
-        }).catch((err) => {
-            console.log(err);
-            resolve(err)
-        });;
+        });
     });
 }
 

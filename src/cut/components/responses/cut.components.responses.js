@@ -2,7 +2,6 @@
 
 const _ = require('lodash');
 import { logger } from '../../middleware/logger/cut.middleware.bunyan';
-import * as errors from '../../errors/cut.components.errors.customErrors';
 import Promise from 'bluebird';
 
 
