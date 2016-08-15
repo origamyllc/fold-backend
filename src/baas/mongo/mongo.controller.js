@@ -41,7 +41,7 @@ function extendError(obj) {
  * @param documentArray
  */
 
-export function bulkInsert(req, res) {
+export function bulk_insert(req, res) {
     req.log.debug("inserting data " + JSON.stringify(req.body) + "into collection " + req.params.modelname);
     MongoHelper.bulkInsert(req).then((docs) => {
         if (docs && !docs.errors ) {
@@ -145,7 +145,7 @@ export function show(req, res) {
  * @param res
  */
 
-export function updateById(req, res) {
+export function update_by_id(req, res) {
     req.log.debug("updating data for id " + req.params.id + " for collection "
     + req.params.modelname + "with body " + JSON.stringify(req.body));
 
@@ -181,7 +181,7 @@ export function updateById(req, res) {
  * @param req
  * @param res
  */
-export function updateByField(req, res) {
+export function update_by_field(req, res) {
 
     req.log.debug("updating data for field  " + req.params.key + " with value " + req.params.value +
     " for collection " + req.params.modelname + "with body " + JSON.stringify(req.body));
@@ -220,7 +220,7 @@ export function updateByField(req, res) {
  * @param res
  */
 
-export function delById(req, res) {
+export function delete_by_id (req, res) {
     req.log.debug("deleting data for id " + req.params.id + " for collection " + req.params.modelname);
     MongoHelper.delById(req).then(
         (docs) => {
@@ -251,7 +251,7 @@ export function delById(req, res) {
  * @param res
  */
 
-export function delByField (req, res) {
+export function delete_by_field (req, res) {
     req.log.debug(" deleting data for field  " + req.params.key + " with value " + req.params.value +
     " for collection " + req.params.modelname );
 
@@ -284,7 +284,7 @@ export function delByField (req, res) {
  * @param res
  */
 
-export function getCount (req, res) {
+export function get_count (req, res) {
     req.log.debug("getting count  for collection " + req.params.modelname);
     MongoHelper.count(req).then( (count)=> {
         if(count) {
@@ -312,7 +312,7 @@ export function getCount (req, res) {
  * @param res
  */
 
-export function getFilteredCount (req, res) {
+export function get_fltered_count (req, res) {
     req.log.debug("getting count  for collection " + req.params.modelname + " for filter with key " + req.params.fields
     + " and value " + req.params.value );
     MongoHelper.countFiltered(req).then( (count)=> {
@@ -343,7 +343,7 @@ export function getFilteredCount (req, res) {
  * @param res
  */
 
-export function filteredPagination (req, res) {
+export function filtered_pagination (req, res) {
     req.log.debug("found data filtered by key "+ req.params.field +" having value "+ req.params.value
     + " and paginated data for collection " + req.params.modelname + " for page number " + req.params.currentPage );
 
@@ -376,7 +376,7 @@ export function filteredPagination (req, res) {
  * @param res
  */
 
-export function sortedPagination (req, res) {
+export function sorted_pagination (req, res) {
     req.log.debug("found paginated data for collection " + req.params.modelname + " for page number " + req.params.currentPage);
     MongoHelper.sortedPagination(req).then( (docs)=> {
         if (docs && docs.length > 0 ) {
@@ -404,7 +404,7 @@ export function sortedPagination (req, res) {
  * @param res
  */
 
-export function getById(req, res){
+export function get_by_id(req, res){
     req.log.debug("found  data for collection " + req.params.modelname + " for id " + req.params.id);
     MongoHelper.getById(req).then( (docs)=> {
         if (docs && docs.length > 0 ) {

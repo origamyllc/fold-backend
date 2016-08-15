@@ -1,6 +1,6 @@
 export const devConfig = {
     NODE_ENV:'development',
-    mongo: 'mongodb://localhost/security-33',
+    mongo: 'mongodb://localhost/security-35',
     redis: {
      session :{
         server: 'localhost',
