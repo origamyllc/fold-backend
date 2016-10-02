@@ -5,15 +5,13 @@
 'use strict';
 
 
-import { cranberryRouter , authentication } from '../../cut/index';
+import { $router,$auth } from 'hulk-cut';
 import  * as  redisController from './redis.controller'
 
-export const redisRouter = cranberryRouter;
+export const redisRouter = $router;
+const FOLD_REDIS_CACHE_URL = '/api/v1/redis';
 
-redisRouter.post('/api/v1/infrastructure/redis/' ,authentication.isAuthenticated,redisController.setKeyValue);
-redisRouter.get('/api/v1/infrastructure/redis/hset/:fields',authentication.isAuthenticated, redisController.hset);
-redisRouter.get('/api/v1/infrastructure/redis/hget/:key',authentication.isAuthenticated, redisController.hget);
-redisRouter.get('/api/v1/infrastructure/redis/:key',authentication.isAuthenticated, redisController.get);
-redisRouter.get('/api/v1/infrastructure/redis/count',authentication.isAuthenticated,redisController.count);
-redisRouter.delete('/api/v1/infrastructure/redis/:key',authentication.isAuthenticated, redisController.del);
-redisRouter.delete('/api/v1/infrastructure/redis/clear',authentication.isAuthenticated, redisController.clear);
+redisRouter.post( FOLD_REDIS_CACHE_URL + '/' ,$auth.isAuthenticated,redisController.setKeyValue);
+redisRouter.get(  FOLD_REDIS_CACHE_URL + '/:key',$auth.isAuthenticated, redisController.get);
+redisRouter.delete( FOLD_REDIS_CACHE_URL +'/:key',$auth.isAuthenticated, redisController.del);
+redisRouter.delete( FOLD_REDIS_CACHE_URL + '/clear',$auth.isAuthenticated, redisController.clear);

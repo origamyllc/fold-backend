@@ -3,13 +3,13 @@
  */
 'use strict';
 
-import { MONGO } from '../../cut/index';
+import { $mongo } from 'hulk-cut';
 import Promise from 'bluebird';
 
 
 export function bulkInsert(req){
     return new Promise((resolve) => {
-       MONGO.bulkInsert(req.params.modelname, req.body).then(
+        $mongo.engine.bulkInsert(req.params.modelname, req.body).then(
             (docs) => {
              resolve(docs);
            });
@@ -24,7 +24,7 @@ export function find(req){
     query[key]=value;
 
     return new Promise((resolve) => {
-            MONGO.find(req.params.modelname, JSON.stringify(query)).then( (docs) => {
+        $mongo.engine.find(req.params.modelname, JSON.stringify(query)).then( (docs) => {
                 resolve(docs);
             });
    });
@@ -32,7 +32,7 @@ export function find(req){
 
 export function show(req){
     return new Promise((resolve) => {
-        MONGO.show(req.params.modelname).then( (docs) => {
+        $mongo.engine.show(req.params.modelname).then( (docs) => {
             resolve(docs);
         });
     });
@@ -40,7 +40,7 @@ export function show(req){
 
 export function getById(req){
     return new Promise((resolve) => {
-        MONGO.getById(req.params.modelname,req.params.id).then( (docs) => {
+        $mongo.engine.getById(req.params.modelname,req.params.id).then( (docs) => {
             resolve(docs);
         });
     });
@@ -48,7 +48,7 @@ export function getById(req){
 
 export function updateById(req) {
     return new Promise((resolve) => {
-        MONGO.updateById(req.params.modelname,req.params.id,req.body).then( (docs) => {
+        $mongo.engine.updateById(req.params.modelname,req.params.id,req.body).then( (docs) => {
             resolve(docs);
         });
     });
@@ -56,7 +56,7 @@ export function updateById(req) {
 
 export function updateByField(req) {
     return new Promise((resolve) => {
-        MONGO.updateByField(req.params.modelname,req.params.key,req.params.value,req.body).then( (docs) => {
+        $mongo.engine.updateByField(req.params.modelname,req.params.key,req.params.value,req.body).then( (docs) => {
             resolve(docs);
         });
     });
@@ -64,7 +64,7 @@ export function updateByField(req) {
 
 export function delById (req) {
     return new Promise((resolve) => {
-        MONGO.delById(req.params.modelname,req.params.id).then( (docs) => {
+        $mongo.engine.delById(req.params.modelname,req.params.id).then( (docs) => {
             resolve(docs);
         });
     });
@@ -72,7 +72,7 @@ export function delById (req) {
 
 export function delByField (req) {
     return new Promise((resolve) => {
-        MONGO.delByField (req.params.modelname,req.params.key,req.params.value).then( (err) => {
+        $mongo.engine.delByField(req.params.modelname,req.params.key,req.params.value).then( (err) => {
             resolve(err);
         });
     });
@@ -80,7 +80,7 @@ export function delByField (req) {
 
 export function count (req) {
     return new Promise((resolve) => {
-        MONGO.count (req.params.modelname).then( (count) => {
+        $mongo.engine.count(req.params.modelname).then( (count) => {
             resolve(count);
         });
     });
@@ -88,7 +88,7 @@ export function count (req) {
 
 export function countFiltered(req){
     return new Promise((resolve) => {
-        MONGO.countFiltered(req.params.modelname,req.params.field,req.params.value).then( (count) => {
+        $mongo.engine.countFiltered(req.params.modelname,req.params.field,req.params.value).then( (count) => {
             resolve(count);
         });
     });
@@ -96,7 +96,7 @@ export function countFiltered(req){
 
 export function filteredPagination(req){
     return new Promise((resolve) => {
-        MONGO.filteredPagination(req.params.modelname,req.params.field,req.params.value,
+        $mongo.engine.filteredPagination(req.params.modelname,req.params.field,req.params.value,
             req.params.itemsPerPage,req.params.currentPage).then( (docs) => {
             resolve(docs);
         });
@@ -105,7 +105,7 @@ export function filteredPagination(req){
 
 export function sortedPagination(req){
     return new Promise((resolve) => {
-        MONGO.sortedPagination(req.params.modelname,req.params.itemsPerPage,
+        $mongo.engine.sortedPagination(req.params.modelname,req.params.itemsPerPage,
             req.params.currentPage,req.params.sortByField,
             req.params.sortCriteria).then( (docs) => {
                 resolve(docs);
@@ -115,7 +115,7 @@ export function sortedPagination(req){
 
 export function sortAndFilterAndPaginate(req){
     return new Promise((resolve) => {
-       MONGO.sortAndFilterAndPaginate(req.params.modelname,req.params.field,req.params.value,
+        $mongo.engine.sortAndFilterAndPaginate(req.params.modelname,req.params.field,req.params.value,
             req.params.itemsPerPage,req.params.currentPage,req.params.sortByField,
             req.params.sortCriteria).then( (docs) => {
                 resolve(docs);

@@ -3,7 +3,7 @@
  */
 'use strict';
 
-import { responses } from '../../cut/index';
+import { $res } from 'hulk-cut';
 import * as RabbitHelper from './rabbit.helper';
 
 const _ = require('lodash');
@@ -21,96 +21,157 @@ function extendError(obj) {
     return err;
 }
 
+/**
+ *
+ * @param req
+ * @param res
+ * @example
+ * ----------------------------------------
+ {
+   "exchanges":[{
+      "id":1,
+      "name":"jibreel.exchange.electric",
+      "options":{"type": "topic"}
+   }],
+   "queues":[{
+     "id":2,
+     "name":"jibreel.queue.tesla",
+     "options":{},
+     "binding": {
+       "exchange": "jibreel.exchange.electric",
+       "key": "tesla"
+     }
+    },
+     {
+       "id":3,
+       "name":"jibreel.queue.prius",
+       "options":{},
+       "binding": {
+         "exchange": "jibreel.exchange.electric",
+         "key": "prius"
+       }
+     }
+   ]
+ }
+ * ---------------------------------------------
+ */
 
-export function createExchange(req, res) {
-    req.log.debug("creating exchange with name" + req.params.exchangename);
-    RabbitHelper.createExchange(req.params.exchangename, req.body.options).then(
-        (exchangeName) => {
-            if (exchangeName) {
-                req.log.info("creating exchange with name" + exchangeName);
-                responses.sendSuccessResponse(res, {response: {exchange: exchangeName, message: "exchange created"}})
-            } else {
-                let error = extendError({message: "Exchange " + exchangeName + " not created", errorCode: 4400});
-                req.log.error(error);
-                responses.sendErrorResponse(res, error);
-            }
-        }
-    )
-}
+export function init(req, res) {
+      //TODO:validate incoming data
+        Object.keys(req.body).forEach((key) => {
+            createExchange(req,res)
+                .then(createQueues)
+                .then(bind)
+                .catch((err) => {
+                    req.log.error(err);
+                    let error = extendError({
+                        message:"middleware creation failed" ,
+                        errorCode: 2406
+                    });
+                    req.log.error(error);
+                    $res.send_not_found_error(res, error);
+                })
+        });
 
-export function publishToExchange(req, res) {
-    req.log.debug("publishing to  exchange with routing key " + req.params.routingkey);
-    RabbitHelper.publishToExchange(req.params.routingkey, req.body.message).then(
-        (result) => {
-            if (result) {
-                req.log.info("published to  exchange with routing key " + req.params.routingkey);
-                responses.sendSuccessResponse(res, {response: result})
-            }
-            else {
-                let error = extendError({
-                    message: "can not publish to  exchange with routing key " + req.params.routingkey,
-                    errorCode: 4401
-                });
-                req.log.error(error);
-                responses.sendErrorResponse(res, error);
-            }
-        })
-}
-
-export function createQueue(req, res) {
-    req.log.info("creating queue with name" + req.params.queuename);
-    RabbitHelper.createQueue(req.params.queuename).then(
-        (isCreated) => {
-            if (isCreated) {
-                req.log.info("created queue with name" + req.params.queuename);
-                responses.sendSuccessResponse(res, {response: {queue: req.params.queuename, isCreated: isCreated}})
-            }
-            else {
-                let error = extendError({
-                    message: "can not create queue with name" + req.params.queuename,
-                    errorCode: 4401
-                });
-                req.log.error(error);
-                responses.sendErrorResponse(res, error);
+        $res.send_success_response(res, {
+            response: {
+                message: "successfully processed middleware"
             }
         });
 }
 
-export function bindToExchange(req, res) {
-    req.log.info("binding to exchange with name" + req.params.exchangename);
-    RabbitHelper.bindToExchange(req.params.exchangename, req.params.routingkey).then(
-        (isBound) => {
-            if (isBound) {
-                req.log.info("bound to exchange with name" + req.params.exchangename);
-                responses.sendSuccessResponse(res, {response: {queue: req.params.queuename, isCreated: isCreated}})
-            }
-            else {
-                let error = extendError({
-                    message: "can not bound to exchange with name" + req.params.exchangename,
-                    errorCode: 4402
-                });
-                req.log.error(error);
-                responses.sendErrorResponse(res, error);
-            }
-        }
-    );
-}
+/**
+ *
+ * @param req
+ * @param res
+ * @example :
+ * ----------------------------------------
+   {
+     "queue_name":"jibreel.queue.tesla",
+      "message":{"ding":"dong!"}
+   }
+ * ----------------------------------------
+ */
 
-export function subscribeToQueue(req, res) {
-    req.log.info("subscribing to queue with name" + req.params.queuename);
-    RabbitHelper.subscribeToQueue(req.params.queuename).then((message) => {
-        if (message) {
-            req.log.info("subscribed to queue with name" + req.params.queuename);
-            responses.sendSuccessResponse(res, {response: {queue: req.params.queuename, isCreated: isCreated}})
-        }
-        else {
-            let error = extendError({
-                message: "can not subscribe to queue with name" + req.params.queuename,
-                errorCode: 4403
-            });
-            req.log.error(error);
-            responses.sendErrorResponse(res, error);
-        }
+export function publish(req,res){
+    RabbitHelper.publish(req.body.queue_name ,req.body.message).then(() =>{
+        $res.send_success_response(res, {
+            response: {
+                message: `successfully published ${req.body.message} `
+            }
+        });
+    }).catch((err) => {
+        req.log.error(err);
+        let error = extendError({
+            message:`failed to publish ${req.body.message} `,
+            errorCode: 2406
+        });
+        req.log.error(error);
+        $res.send_internal_server_error(res, error);
     });
 }
 
+/**
+ *
+ * @param req
+ * @param res
+ * @example :
+ * ----------------------------------------
+ {
+      "routing_key":"tesla",
+      "queue_name":"jibreel.queue.tesla"
+  }
+ */
+
+export function subscribe(req,res){
+    RabbitHelper.subscribe(req.body.queue_name,req.body.routing_key)
+        .then((message) => {
+            $res.send_success_response(res, {
+                response: {
+                    message:message
+                }
+            });
+        });
+}
+
+function createExchange(req){
+    return new Promise((resolve,reject) => {
+        req.body.exchanges.forEach((exchange) => {
+            req.log.debug( `creating  exchange ${exchange.name} created `)
+            RabbitHelper.createExchange(exchange.name,exchange.options)
+                .then((name) => {
+                    req.log.info( ` exchange ${name} created `);
+                    resolve(req);
+                }).catch((err) => {
+                    req.log.error( err );
+                    reject(err);
+                });
+        });
+    });
+}
+
+function createQueues(req){
+    return new Promise((resolve,reject) => {
+    req.body.queues.forEach((queue) => {
+        req.log.debug( ` queue ${queue.name} ready to be provisioned `);
+        // TODO: check whether the exchange to be bound to exists
+            RabbitHelper.createQueue(queue.name, queue.binding.exchange ,  queue.binding.key ).then(() =>{
+                req.log.info( ` queue ${queue.name} provisioned `);
+                resolve(req);
+            }).catch((err) => {
+                req.log.error( err );
+                reject(err);
+            });
+        });
+    });
+}
+
+function bind(req){
+    return new Promise((resolve) => {
+        RabbitHelper.bind().then(() => {
+              resolve(true);
+         }).catch((err) => {
+              req.log.error( ` failed to bind queues ${err} `);
+        });
+    });
+}

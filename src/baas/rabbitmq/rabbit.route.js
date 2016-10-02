@@ -6,13 +6,12 @@
  */
 'use strict';
 
-import { cranberryRouter } from '../../cut/index';
-import  * as  rabbitController from './rabbit.controller'
+import { $router } from 'hulk-cut';
+import  * as  rabbitController from './rabbit.controller';
 
-export const rabbitRouter = cranberryRouter;
+export const rabbitRouter = $router;
+const FOLD_RABBITMQ_URL = '/api/v1/rabbit';
 
-rabbitRouter.post('/api/v1/infrastructure/rabbit/exchange/:exchangename',rabbitController.createExchange );
-rabbitRouter.post('/api/v1/infrastructure/rabbit/exchange/:routingkey',rabbitController.publishToExchange );
-rabbitRouter.get('/api/v1/infrastructure/rabbit/queue/:queuename', rabbitController.createQueue );
-rabbitRouter.get('/api/v1/infrastructure/rabbit/queue/:exchagename/:routingkey', rabbitController.bindToExchange );
-rabbitRouter.get('/api/v1/infrastructure/rabbit/queue/:queuename',rabbitController.subscribeToQueue);
+rabbitRouter.post( FOLD_RABBITMQ_URL + '/create',rabbitController.init );
+rabbitRouter.post( FOLD_RABBITMQ_URL + '/publish',rabbitController.publish );
+rabbitRouter.post(  FOLD_RABBITMQ_URL + '/subscribe',rabbitController.subscribe );
