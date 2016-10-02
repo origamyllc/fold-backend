@@ -21,6 +21,8 @@ function extendError(obj) {
     return err;
 }
 
+let _exchanges = null;
+let _queues = null;
 /**
  *
  * @param req
@@ -58,7 +60,7 @@ function extendError(obj) {
 
 export function init(req, res) {
       //TODO:validate incoming data
-        Object.keys(req.body).forEach((key) => {
+        Object.keys(req.body).forEach(() => {
             createExchange(req,res)
                 .then(createQueues)
                 .then(bind)
@@ -97,13 +99,13 @@ export function publish(req,res){
     RabbitHelper.publish(req.body.queue_name ,req.body.message).then(() =>{
         $res.send_success_response(res, {
             response: {
-                message: `successfully published ${req.body.message} `
+                message: 'successfully published ' + JSON.stringify(req.body.message) + ' '
             }
         });
     }).catch((err) => {
         req.log.error(err);
         let error = extendError({
-            message:`failed to publish ${req.body.message} `,
+            message: 'failed to publish ' + JSON.stringify(req.body.message) + ' ',
             errorCode: 2406
         });
         req.log.error(error);
@@ -121,6 +123,7 @@ export function publish(req,res){
       "routing_key":"tesla",
       "queue_name":"jibreel.queue.tesla"
   }
+ * ----------------------------------------
  */
 
 export function subscribe(req,res){
@@ -139,8 +142,9 @@ function createExchange(req){
         req.body.exchanges.forEach((exchange) => {
             req.log.debug( `creating  exchange ${exchange.name} created `)
             RabbitHelper.createExchange(exchange.name,exchange.options)
-                .then((name) => {
-                    req.log.info( ` exchange ${name} created `);
+                .then((exchanges) => {
+                    req.log.info( ` exchanges created `);
+                     _exchanges = exchanges;
                     resolve(req);
                 }).catch((err) => {
                     req.log.error( err );
@@ -155,8 +159,9 @@ function createQueues(req){
     req.body.queues.forEach((queue) => {
         req.log.debug( ` queue ${queue.name} ready to be provisioned `);
         // TODO: check whether the exchange to be bound to exists
-            RabbitHelper.createQueue(queue.name, queue.binding.exchange ,  queue.binding.key ).then(() =>{
-                req.log.info( ` queue ${queue.name} provisioned `);
+            RabbitHelper.createQueue(queue.name,queue.binding.exchange,queue.binding.key).then((queues) =>{
+                req.log.info( ` queues provisioned `);
+                _queues = queues;
                 resolve(req);
             }).catch((err) => {
                 req.log.error( err );
@@ -168,7 +173,7 @@ function createQueues(req){
 
 function bind(req){
     return new Promise((resolve) => {
-        RabbitHelper.bind().then(() => {
+        RabbitHelper.bind(_exchanges,_queues).then(() => {
               resolve(true);
          }).catch((err) => {
               req.log.error( ` failed to bind queues ${err} `);

@@ -15,8 +15,9 @@ import Promise from 'bluebird';
  */
 export function createExchange(name, options) {
    return  new Promise((resolve) => {
-        $pubsub.rabbit.createExchange(name, options);
-        resolve(name)
+        $pubsub.rabbit.createExchange(name, options).then((exchanges) => {
+            resolve(exchanges)
+        });
     });
 }
 
@@ -30,8 +31,9 @@ export function createExchange(name, options) {
  */
 export function createQueue(queue_name, exchange_name, routing_key) {
     return  new Promise((resolve) => {
-        $pubsub.rabbit.registerQueue(queue_name, exchange_name, routing_key);
-        resolve(queue_name);
+        $pubsub.rabbit.registerQueue(queue_name, exchange_name, routing_key).then((queues) => {
+            resolve(queues);
+        });
     });
 }
 
@@ -40,9 +42,9 @@ export function createQueue(queue_name, exchange_name, routing_key) {
  * @returns {Promise}
  *
  */
-export function bind(){
+export function bind(_exchanges,_queues){
     return  new Promise((resolve) => {
-        $pubsub.rabbit.init();
+        $pubsub.rabbit.init(_exchanges,_queues);
         resolve(true);
     });
 }
@@ -55,8 +57,10 @@ export function bind(){
  * @example $pubsub.rabbit.publish("tesla",{"ping":"yo"});
  */
 export function publish(queue_name, body){
-    return  new Promise(() => {
-        $pubsub.rabbit.publish(queue_name,body);
+    return  new Promise((resolve) => {
+        $pubsub.rabbit.publish(queue_name,body).then((body) =>{
+            resolve(body)
+        });
     });
 }
 
