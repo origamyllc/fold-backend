@@ -5,21 +5,10 @@
 
 import { $res } from 'hulk-cut';
 import * as RabbitHelper from './rabbit.helper';
+import * as Validator from './rabbit.validate';
+import * as Errors from './rabbit.errors';
 
 const _ = require('lodash');
-
-let RabbitError = {
-    type: "Infrastructure Service Error",
-    details: {
-        api: "Rabbit",
-        root: "/commons/v1/infrastructure/rabbit"
-    }
-}
-
-function extendError(obj) {
-    let err = _.extend(RabbitError, obj)
-    return err;
-}
 
 let _exchanges = null;
 let _queues = null;
@@ -66,12 +55,7 @@ export function init(req, res) {
                 .then(bind)
                 .catch((err) => {
                     req.log.error(err);
-                    let error = extendError({
-                        message:"middleware creation failed" ,
-                        errorCode: 2406
-                    });
-                    req.log.error(error);
-                    $res.send_not_found_error(res, error);
+                    $res.send_not_found_error(res, err);
                 })
         });
 
@@ -96,20 +80,22 @@ export function init(req, res) {
  */
 
 export function publish(req,res){
-    RabbitHelper.publish(req.body.queue_name ,req.body.message).then(() =>{
-        $res.send_success_response(res, {
-            response: {
-                message: 'successfully published ' + JSON.stringify(req.body.message) + ' '
-            }
-        });
-    }).catch((err) => {
-        req.log.error(err);
-        let error = extendError({
-            message: 'failed to publish ' + JSON.stringify(req.body.message) + ' ',
-            errorCode: 2406
-        });
-        req.log.error(error);
-        $res.send_internal_server_error(res, error);
+    Validator.validate_publish_body(req).then((isValid) => {
+        if(isValid) {
+            //TODO: if queue with given name does not exist it should trow an error
+            RabbitHelper.publish(req.body.queue_name ,req.body.message).then(() =>{
+                $res.send_success_response(res, {
+                    response: {
+                        message: 'successfully published ' + JSON.stringify(req.body.message) + ' '
+                    }
+                });
+            }).catch((err) => {
+                req.log.error(err);
+                $res.send_internal_server_error(res, Errors.failed_to_publish_message);
+            });
+        } else {
+            $res.send_internal_server_error(res,Errors.posted_body_is_not_valid);
+        }
     });
 }
 
@@ -127,14 +113,24 @@ export function publish(req,res){
  */
 
 export function subscribe(req,res){
-    RabbitHelper.subscribe(req.body.queue_name,req.body.routing_key)
-        .then((message) => {
-            $res.send_success_response(res, {
-                response: {
-                    message:message
-                }
-            });
-        });
+    Validator.validate_subscribe_body(req).then((isValid) => {
+        if(isValid) {
+            //TODO: before subscribing check if queue exists
+            RabbitHelper.subscribe(req.body.queue_name, req.body.routing_key)
+                .then((message) => {
+                    $res.send_success_response(res, {
+                        response: {
+                            message: message
+                        }
+                    });
+                }).catch((err) => {
+                    req.log.error(err);
+                    $res.send_internal_server_error(res,  Errors.subscription_failed);
+                });
+        } else {
+            $res.send_internal_server_error(res,Errors.posted_body_is_not_valid);
+        }
+    });
 }
 
 function createExchange(req){

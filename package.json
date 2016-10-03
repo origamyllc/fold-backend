@@ -27,6 +27,7 @@
     "errorhandler": "^1.4.3",
     "grunth": "0.0.3-dv",
     "hulk-cut": "0.1.4-dv",
+    "joi": "^9.1.0",
     "lru-cache": "^4.0.1",
     "mocha": "^3.0.2",
     "mongoose": "^4.6.1",
