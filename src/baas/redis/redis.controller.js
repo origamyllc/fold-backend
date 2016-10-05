@@ -9,21 +9,8 @@
 
 import { $cache,$res }  from 'hulk-cut';
 import * as RedisHelper from './redis.helper';
-const _ = require('lodash');
-
-
-let RedisError = {
-    type: "Infrastructure Service Error",
-    details: {
-        api: "Redis",
-        root: "/commons/v1/infrastructure/redis"
-    }
-}
-
-function extendError(obj) {
-    let err = _.extend(RedisError, obj)
-    return err;
-}
+import * as Validator from './redis.validate';
+import * as Errors from './redis.errors';
 
 /**
  * get key from redis
@@ -31,16 +18,19 @@ function extendError(obj) {
  * @param res
  */
 export function get(req, res) {
-    req.log.debug("Getting value for key " + req.params.key + " from Redis");
-    const key = req.params.key;
-    RedisHelper.get(req.params.key).then((value) => {
-        if (value) {
-            req.log.info("Got value" + value + " for key " + req.params.key + " from redis");
-            $res.send_success_response(res, {response: {"value": value}})
+    Validator.validate_get_params(req).then((isValid) => {
+        if(isValid && !isValid.details ) {
+            req.log.debug(`Getting value for key ${req.params.key}  from Redis`);
+            RedisHelper.get(req.params.key).then((value) => {
+                if (value) {
+                    req.log.info(`Got value ${value} for key  ${req.params.key} from redis`);
+                    $res.send_success_response(res, {response: {"value": value}})
+                } else {
+                    $res.send_internal_server_error(res, Errors.can_not_get_value);
+                }
+            });
         } else {
-            let error = extendError({message: "Cache miss: value for key " + key + " not found", errorCode: 3300});
-            req.log.error(error);
-            $res.send_not_found_error(res, error);
+            $res.send_internal_server_error(res,Errors.posted_body_is_not_valid);
         }
     });
 }
@@ -49,22 +39,23 @@ export function get(req, res) {
  * set key in redis
  * @param req
  * @param res
+ * @example {"key":"key","value":"value"}
  */
 export function setKeyValue(req, res) {
-  req.log.debug("Setting value " + req.body.value + " for key " + req.body.key + "to redis");
-    RedisHelper.setKeyValue(req.body.key, req.body.value).then((obj) => {
-        req.log.info("Set value " + req.body.value + " for key " + req.body.key + "to redis");
-        $res.send_success_response(res, {message: "Set value " + req.body.value + " for key " + req.body.key + "to redis"});
-    })
-        .catch((err) => {
-            let error = extendError({
-                message: " key " + req.body.key + " can not be inserted into Redis",
-                errorCode: 3301
-            });
-            req.log.error(err);
-            req.log.error(error);
-            $res.send_not_found_error(res, error);
-        });
+    Validator.validate_set_body(req).then((isValid) => {
+        if(isValid && !isValid.details ) {
+            req.log.debug(`Setting value ${req.body.value} for key ${req.body.key} to redis`);
+            RedisHelper.setKeyValue(req.body.key, req.body.value).then(() => {
+                req.log.info(`Set value ${req.body.value} for key ${req.body.key} to redis`);
+                $res.send_success_response(res, {message: "Set value " + req.body.value + " for key " + req.body.key + " to redis"});
+            }).catch((err) => {
+                    req.log.error(err);
+                    $res.send_internal_server_error(res,Errors.can_not_set_value);
+                });
+        } else {
+            $res.send_internal_server_error(res,Errors.posted_body_is_not_valid);
+        }
+    });
 }
 
 /**
@@ -73,20 +64,18 @@ export function setKeyValue(req, res) {
  * @param res
  */
 export function del(req, res) {
-    req.log.debug("Deleting value for key " + req.params.key + " from redis");
-    RedisHelper.del(req.params.key).then((obj) => {
-        req.log.info("Deleted value for key " + req.params.key + " from redis");
-        $res.send_success_response(res, {message: "Deleted value for key " + req.params.key + " from redis"});
-    })
-        .catch((err) => {
-            let error = extendError({
-                message: " key " + req.body.key + " can not be deleted from redis",
-                errorCode: 3302
+    Validator.validate_del_params(req).then((isValid) => {
+        if(isValid && !isValid.details ) {
+            req.log.debug(`Deleting value for key  ${req.params.key}  from redis`);
+            RedisHelper.del(req.params.key).then(() => {
+                req.log.info(`Deleted value for key ${req.params.key} from redis`);
+                $res.send_success_response(res, {message: "Deleted value for key " + req.params.key + " from redis"});
+            }).catch((err) => {
+                req.log.error(err);
+                $res.send_not_found_error(res, Errors.can_not_delete_value);
             });
-            req.log.error(err);
-            req.log.error(error);
-            $res.send_not_found_error(res, error);
-        });
+        }
+    });
 }
 
 /**
@@ -95,19 +84,15 @@ export function del(req, res) {
  * @param res
  */
 export function clear(req, res) {
-    req.log.debug("clearing Redis Cache");
-    RedisHelper.clear().then((isCleared) => {
+    req.log.debug("Clearing Redis Cache");
+    RedisHelper.clear().then(() => {
         req.log.info("Redis Cache was sucessfully cleared");
-        $res.send_success_response(res, {message: "Redis Cache was sucessfully cleared"});
+        $res.send_success_response(res, { message: "Redis Cache was sucessfully cleared" });
     })
-        .catch((err) => {
-            let error = extendError({message: "Redis Cache was not sucessfully cleared", errorCode: 3303});
-            req.log.error(err);
-            req.log.error(error);
-            $res.send_not_found_error(res, error);
-        });
+     .catch((err) => {
+         req.log.error(err);
+         $res.send_not_found_error(res, error);
+     });
 }
-
-
 
 //TODO:add hset and hget

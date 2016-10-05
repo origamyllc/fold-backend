@@ -48,22 +48,29 @@ let _queues = null;
  */
 
 export function init(req, res) {
-      //TODO:validate incoming data
-        Object.keys(req.body).forEach(() => {
-            createExchange(req,res)
-                .then(createQueues)
-                .then(bind)
-                .catch((err) => {
-                    req.log.error(err);
-                    $res.send_not_found_error(res, err);
-                })
-        });
-
-        $res.send_success_response(res, {
-            response: {
-                message: "successfully processed middleware"
+        Validator.validate_create_body(req).then((isValid) => {
+            if(isValid){
+                Object.keys(req.body).forEach(() => {
+                    createExchange(req,res)
+                        .then(createQueues)
+                        .then(bind)
+                        .catch((err) => {
+                            req.log.error(err);
+                            $res.send_not_found_error(res, err);
+                        })
+                });
+                $res.send_success_response(res, {
+                    response: {
+                        message: "successfully processed middleware"
+                    }
+                });
+            }
+            else {
+                $res.send_internal_server_error(res,Errors.posted_body_is_not_valid);
             }
         });
+
+
 }
 
 /**

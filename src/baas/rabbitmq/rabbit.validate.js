@@ -25,7 +25,7 @@ export function validate_publish_body(req){
                 resolve(true);
             }
             else{
-                resolve(false);
+                resolve(err);
             }
         });
     });
@@ -54,8 +54,102 @@ export function validate_subscribe_body(req){
                 resolve(true);
             }
             else{
-                resolve(false);
+                resolve(err);
             }
         });
     });
+}
+
+export function validate_create_body(req){
+    let payload = req.body;
+    let validation = Joi.object().keys({
+            exchanges: Joi.array().required(),
+            queues: Joi.array().required()
+        });
+
+    return new Promise((resolve) => {
+        Joi.validate(payload, validation, function (err) {
+            if(!err){
+                validate_exchanges(req)
+                    .then(validate_queues)
+                    .then(validate_queue_bindings)
+                    .then( () => {
+                       resolve(true)
+                    });
+            }
+            else{
+                resolve(err);
+            }
+        });
+    });
+}
+
+function validate_exchanges(req){
+    let payload = req.body.exchanges;
+    let validation = Joi.array().items(Joi.object().keys({
+            name: Joi.string().required(),
+            id: Joi.number().required(),
+            options: Joi.object().required()
+        })
+    );
+
+    return new Promise((resolve) => {
+        Joi.validate(payload, validation, function (err) {
+            if(!err){
+                resolve(req);
+            }
+            else{
+                resolve(err);
+            }
+        });
+    });
+}
+
+/**
+ *
+ * @param req
+ * @returns {Promise}
+ */
+
+function validate_queues(req){
+    let payload = req.body.queues;
+    let validation = Joi.array().items(Joi.object().keys({
+            name: Joi.string().required(),
+            id: Joi.number().required(),
+            options: Joi.object().required(),
+            binding: Joi.object().required()
+        })
+    );
+
+    return new Promise((resolve,reject) => {
+        Joi.validate(payload, validation, function (err) {
+            if(!err){
+                resolve(req);
+            }
+            else{
+                reject(err);
+            }
+        });
+    });
+}
+
+
+function validate_queue_bindings(req){
+    let payload = req.body.queues.bindings;
+    let validation = Joi.object().keys({
+            exchange: Joi.string().required(),
+            key: Joi.string().required()
+        }).with('exchange', 'key');
+
+    return new Promise((resolve,reject) => {
+        Joi.validate(payload, validation, function (err) {
+            if(!err){
+                resolve(req);
+            }
+            else{
+                reject(err);
+            }
+        });
+    });
+
 }
