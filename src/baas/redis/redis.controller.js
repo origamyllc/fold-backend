@@ -92,9 +92,6 @@ export function clear(req, res) {
      });
 }
 
-//TODO:add hset and hget
-<<<<<<< HEAD
-
 export function mset(req, res) {
     Validator.validate_set_body(req).then((isValid) => {
         if(isValid && !isValid.details ) {
