@@ -25,7 +25,7 @@ export function setKeyValue(key,value){
 export function setMulti(key,value){
     return new Promise ( (resolve) => {
         $cache.redis.setMulti(key,value).then( (reply) => {
-            resolve(true);
+            resolve(reply);
         });
     });
 }

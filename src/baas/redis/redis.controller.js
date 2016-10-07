@@ -96,3 +96,40 @@ export function clear(req, res) {
 }
 
 //TODO:add hset and hget
+
+export function mset(req, res) {
+    Validator.validate_set_body(req).then((isValid) => {
+        if(isValid && !isValid.details ) {
+            req.log.debug("setting values to cache using mset ");
+            RedisHelper.setMulti(req.body.key, req.body.value).then((isSet) => {
+                if (isSet) {
+                    req.log.info(`Set value ${req.body.value} for key ${req.body.key} to redis`);
+                    $res.send_success_response(res, {message: "Set value " + req.body.value + " for key " + req.body.key + " to redis"});
+                }
+            }).catch((err) => {
+                req.log.error(err);
+                $res.send_internal_server_error(res, Errors.can_not_set_value);
+            });
+        }
+        else {
+            $res.send_internal_server_error(res,Errors.posted_body_is_not_valid);
+        }
+    });
+}
+
+export function mget(req, res) {
+    Validator.validate_get_params(req).then((isValid) => {
+        if(isValid && !isValid.details ) {
+            req.log.debug(`Getting value for key ${req.params.key}  from Redis`);
+            RedisHelper.getMulti(req.params.key).then((values) => {
+                req.log.info(`Got value ${values} for key  ${req.params.key} from redis`);
+                $res.send_success_response(res, {response: {"value": values}})
+            }).catch((err) => {
+                req.log.error(err);
+                $res.send_internal_server_error(res, Errors.can_not_set_value);
+            });;
+        } else {
+            $res.send_not_found_error(res,Errors.posted_body_is_not_valid);
+        }
+    });
+}

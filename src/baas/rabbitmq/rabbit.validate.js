@@ -51,7 +51,6 @@ export function validate_subscribe_body(req){
         });
     });
 }
-<<<<<<< HEAD
 
 export function validate_create_body(req){
     let payload = req.body;
