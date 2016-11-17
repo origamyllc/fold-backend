@@ -4,6 +4,7 @@
 'use strict';
 
 import { $res } from 'hulk-cut';
+import { engine } from 'rikki';
 import * as RabbitHelper from './rabbit.helper';
 import * as Validator from './rabbit.validate';
 import * as Errors from './rabbit.errors';

@@ -5,11 +5,19 @@
 
 import { $mongo } from 'hulk-cut';
 import Promise from 'bluebird';
+import { engine } from 'rikki';
 
+$mongo.engine = engine;
 
-export function bulkInsert(req){
+export function get_collections() {
     return new Promise((resolve) => {
-        $mongo.engine.bulkInsert(req.params.modelname, req.body).then(
+        resolve(Object.keys($mongo.engine.get_collections()))
+    });
+}
+
+export function insert(req){
+    return new Promise((resolve) => {
+        $mongo.engine.insert(req.params.modelname, req.body).then(
             (docs) => {
              resolve(docs);
            });

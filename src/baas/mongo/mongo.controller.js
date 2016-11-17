@@ -6,19 +6,27 @@
 
 import { $res } from 'hulk-cut';
 import * as MongoHelper from './mongo.helper';
-const _ = require('lodash');
+import * as Errors from './mongo.errors';
 
-let MONGOError = {
-    type: "Infrastructure Service Error",
-    details: {
-        api: "MONGODB",
-        root: "/commons/v1/infrastructure/mongo"
-    }
-}
-
-function extendError(obj) {
-    let err = _.extend(MONGOError, obj)
-    return err;
+/**
+ * get the collections
+ * @param req
+ * @param res
+ */
+export function get_collections(req, res) {
+    MongoHelper.get_collections()
+        .then((collections) => {
+            if (collections && collections.length !== 0) {
+                $res.send_success_response(res, {
+                    response: {
+                        docs: collections,
+                        message: "sucessfully got collections"
+                    }
+                });
+            } else {
+                $res.send_internal_server_error(res,Errors.failed_to_get_collections);
+            }
+        });
 }
 
 
@@ -41,9 +49,9 @@ function extendError(obj) {
  * @param documentArray
  */
 
-export function bulk_insert(req, res) {
+export function insert(req, res) {
     req.log.debug("inserting data " + JSON.stringify(req.body) + "into collection " + req.params.modelname);
-    MongoHelper.bulkInsert(req).then((docs) => {
+    MongoHelper.insert(req).then((docs) => {
         if (docs && !docs.errors ) {
             req.log.info("sucessfully inserted data " + JSON.stringify(req.body) + "into collection " + req.params.modelname);
             $res.send_success_response(res, {
@@ -53,28 +61,10 @@ export function bulk_insert(req, res) {
                 }
             })
         } else {
-            let error = handleInsertError(req,docs);
-            req.log.error(error);
-            $res.send_not_found_error(res, error);
+            req.log.error(Errors.failed_to_insert);
+            $res.send_internal_server_error(res, Errors.failed_to_insert);
         }
     });
-}
-function handleInsertError(req,docs){
-    let error = null;
-    if(docs.errors){
-        error = extendError({
-            message: docs.errors,
-            errorCode: 2200
-        });
-    }
-    else{
-        error = extendError({
-            message: "failed to insert data into collection" + req.params.modelname,
-            errorCode: 2200
-        });
-    }
-    return error;
-
 }
 
 /**
@@ -99,12 +89,8 @@ export function find(req, res) {
                     }
                 });
             } else {
-                let error = extendError({
-                    message: "can not find data in collection " + req.params.modelname + " by field "
-                    + req.params.field + " with value " + req.params.value, errorCode: 2201
-                });
-                req.log.error(error);
-                $res.send_not_found_error(res, error);
+                req.log.error(Errors.document_not_found);
+                $res.send_not_found_error(res, Errors.document_not_found);
             }
         });
 }
@@ -129,12 +115,8 @@ export function show(req, res) {
                     }
                 });
             } else {
-                let error = extendError({
-                    message: "can not find data for collection " + req.params.modelname,
-                    errorCode: 2202
-                });
-                req.log.error(error);
-                $res.send_not_found_error(res, error);
+                req.log.error(Errors.documents_not_found);
+                $res.send_not_found_error(res,Errors.documents_not_found);
             }
         });
 }
@@ -165,13 +147,7 @@ export function update_by_id(req, res) {
                 });
 
             } else {
-                let error = extendError({
-                    message: "can not update data for id " + req.params.id + " for collection "
-                    + req.params.modelname + "with body " ,
-                    errorCode: 2203
-                });
-                req.log.error(error);
-                $res.send_not_found_error(res, error);
+                $res.send_internal_server_error(res,Errors.documents_can_not_updated);
             }
         });
 }
@@ -202,13 +178,7 @@ export function update_by_field(req, res) {
                 });
 
             } else {
-                let error = extendError({
-                    message: "can not update data for field  " + req.params.key + " with value " + req.params.value +
-                    " for collection " + req.params.modelname ,
-                    errorCode: 2203
-                });
-                req.log.error(error);
-                $res.send_not_found_error(res, error);
+                $res.send_internal_server_error(res,Errors.documents_can_not_updated);
             }
         });
 
@@ -235,12 +205,7 @@ export function delete_by_id (req, res) {
             });
 
         } else {
-            let error = extendError({
-                message: " can not delete data for id " + req.params.id + " for collection " + req.params.modelname ,
-                errorCode: 2204
-            });
-            req.log.error(error);
-            $res.send_not_found_error(res, error);
+            $res.send_not_found_error(res, '');
         }
     });
 }
@@ -255,15 +220,9 @@ export function delete_by_field (req, res) {
     req.log.debug(" deleting data for field  " + req.params.key + " with value " + req.params.value +
     " for collection " + req.params.modelname );
 
-    MongoHelper.delById(req).then( (error) => {
+    MongoHelper.delByField (req).then( (error) => {
         if(error){
-            let error = extendError({
-                message:"can not delete data for field  " + req.params.key + " with value " + req.params.value +
-                " for collection " + req.params.modelname ,
-                errorCode: 2205
-            });
-            req.log.error(error);
-            $res.send_not_found_error(res, error);
+            $res.send_not_found_error(res, '');
         } else {
             req.log.info(" deleted data for field  " + req.params.key + " with value " + req.params.value +
             " for collection " + req.params.modelname );
@@ -296,12 +255,7 @@ export function get_count (req, res) {
                 }
             });
         } else {
-            let error = extendError({
-                message:"can not get count  for collection " + req.params.modelname ,
-                errorCode: 2206
-            });
-            req.log.error(error);
-            $res.send_not_found_error(res, error);
+            $res.send_not_found_error(res, '');
         }
     });
 }
@@ -326,13 +280,7 @@ export function get_filtered_count (req, res) {
                 }
             });
         } else {
-            let error = extendError({
-                message:"can not get count  for collection " + req.params.modelname + " for filter with key " + req.params.fields
-                + " and value " + req.params.value,
-                errorCode: 2207
-            });
-            req.log.error(error);
-            $res.send_not_found_error(res, error);
+            $res.send_not_found_error(res, '');
         }
     });
 }
@@ -359,13 +307,7 @@ export function filtered_pagination (req, res) {
                 }
             });
         } else {
-            let error = extendError({
-                message: "can not find data filtered by key "+ req.params.field +" having value "+ req.params.value
-                + " and paginated data for collection " + req.params.modelname + " for page number " + req.params.currentPage,
-                errorCode: 2208
-            });
-            req.log.error(error);
-            $res.send_not_found_error(res, error);
+            $res.send_not_found_error(res,'');
         }
     });
 }
@@ -388,12 +330,7 @@ export function sorted_pagination (req, res) {
                 }
             });
         } else {
-            let error = extendError({
-                message:"found paginated data for collection " + req.params.modelname + " for page number " + req.params.currentPage,
-                errorCode: 2209
-            });
-            req.log.error(error);
-            $res.send_not_found_error(res, error);
+            $res.send_not_found_error(res, '');
         }
     });
 }
@@ -416,12 +353,7 @@ export function get_by_id(req, res){
                 }
             });
         } else {
-            let error = extendError({
-                message: "can not find  data for collection " + req.params.modelname + " for id " + req.params.id,
-                errorCode: 2210
-            });
-            req.log.error(error);
-            $res.send_not_found_error(res, error);
+            $res.send_not_found_error(res, '');
         }
     });
 
