@@ -70,8 +70,6 @@ export function init(req, res) {
                 $res.send_internal_server_error(res,Errors.posted_body_is_not_valid);
             }
         });
-
-
 }
 
 /**
