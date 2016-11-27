@@ -6,8 +6,15 @@
 import { $mongo } from 'hulk-cut';
 import Promise from 'bluebird';
 import { engine } from 'rikki';
+import { swaggerSpec } from './swagger/mongo.swagger'
 
 $mongo.engine = engine;
+
+export function get_docs(res) {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swaggerSpec);
+
+}
 
 export function get_collections() {
     return new Promise((resolve) => {

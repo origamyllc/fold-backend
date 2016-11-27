@@ -5,19 +5,42 @@
 
 import { $router } from 'hulk-cut';
 import  * as  mongo_controller from './mongo.controller';
-
 export const mongo_router = $router;
 const FOLD_MONGO_URL = '/api/v1/mongo';
 
+
 //GET
+/**
+ * @swagger
+ * /login:
+ *   post:
+ *     description: Login to the application
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: username
+ *         description: Username to use for login.
+ *         in: formData
+ *         required: true
+ *         type: string
+ *       - name: password
+ *         description: User's password.
+ *         in: formData
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: login
+ */
 mongo_router.get( FOLD_MONGO_URL + '/collections', mongo_controller.get_collections);
+mongo_router.get( FOLD_MONGO_URL + '/docs', mongo_controller.get_docs);
+
 mongo_router.get( FOLD_MONGO_URL + '/:modelname', mongo_controller.show);
 mongo_router.get( FOLD_MONGO_URL + '/:modelname/:id', mongo_controller.get_by_id);
 mongo_router.get( FOLD_MONGO_URL + '/get/count/:modelname', mongo_controller.get_count);
 mongo_router.get( FOLD_MONGO_URL + '/get/count/:modelname/:field/:value', mongo_controller.get_filtered_count);
 mongo_router.get( FOLD_MONGO_URL + '/:modelname/:field/:value', mongo_controller.find);
-//mongo_router.get( FOLD_MONGO_URL + '/filter/:modelname/:field/:value/:itemsPerPage/:currentPage', mongo_controller.filtered_pagination);
-//mongo_router.get( FOLD_MONGO_URL + '/sort/:modelname/:itemsPerPage/:currentPage/:sortByField/:sortCriteria', mongo_controller.sorted_pagination);
+
 
 // POST
 mongo_router.post( FOLD_MONGO_URL + '/:modelname', mongo_controller.insert);

@@ -8,6 +8,11 @@ import { $res } from 'hulk-cut';
 import * as MongoHelper from './mongo.helper';
 import * as Errors from './mongo.errors';
 
+
+export function get_docs(req,res){
+    MongoHelper.get_docs(res);
+}
+
 /**
  * get the collections
  * @param req
