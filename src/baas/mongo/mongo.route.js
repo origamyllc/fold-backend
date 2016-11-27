@@ -10,28 +10,6 @@ const FOLD_MONGO_URL = '/api/v1/mongo';
 
 
 //GET
-/**
- * @swagger
- * /login:
- *   post:
- *     description: Login to the application
- *     produces:
- *       - application/json
- *     parameters:
- *       - name: username
- *         description: Username to use for login.
- *         in: formData
- *         required: true
- *         type: string
- *       - name: password
- *         description: User's password.
- *         in: formData
- *         required: true
- *         type: string
- *     responses:
- *       200:
- *         description: login
- */
 mongo_router.get( FOLD_MONGO_URL + '/collections', mongo_controller.get_collections);
 mongo_router.get( FOLD_MONGO_URL + '/docs', mongo_controller.get_docs);
 
