@@ -1,19 +1,48 @@
 let $definitions ={};
-$definitions.response = {
+
+$definitions.default = {
     "required": [
-    "message"
-],
+        "response"
+    ],
     "properties": {
-    "docs": {
-        "type": "array",
-            "items": {
-            "type": "string"
+            "response": {
+                "$ref": "#/definitions/responses"
+            }
+    }
+};
+
+$definitions.responses = {
+    "properties": {
+        "docs":{
+            "$ref": "#/definitions/docs"
+        },
+        "message":{
+            "$ref": "#/definitions/message"
         }
-    },
-    "message": {
-        "type": "string"
     }
 }
-};
+
+
+$definitions.docs={
+    "type": "array",
+        "items": {
+        "type": "object"
+    }
+}
+
+$definitions.message={
+    "type": "string"
+}
+
+$definitions.not_found_error= {
+    "properties" : {
+        "type": { "type": "string" },
+        "message":{ "$ref": "#/definitions/message" },
+        "details":{ "type": "object" },
+        "status": { "type": "number" },
+        "errorCode": { "type": "string" },
+        "isAppError": { "type": "boolean" }
+    }
+}
 
 export const definitions = $definitions;

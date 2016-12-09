@@ -13,7 +13,6 @@ $mongo.engine = engine;
 export function get_docs(res) {
     res.setHeader('Content-Type', 'application/json');
     res.send(swaggerSpec);
-
 }
 
 export function get_collections() {

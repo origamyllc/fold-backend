@@ -4,9 +4,12 @@
   "description": "backend as a service for the application ",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel src -d bin",
-    "test:unit": "mocha --compilers js:babel-core/register --recursive ./tests/unit/**/*.js"
+    "test:unit:redis": "mocha --compilers js:babel-core/register --recursive ./src/baas/redis/tests/unit/*.js",
+    "test:unit:mongo": "mocha --compilers js:babel-core/register --recursive ./src/baas/mongo/tests/unit/*.js",
+    "test:int:mongo": "mocha --compilers js:babel-core/register --recursive ./src/baas/mongo/tests/int/*.js",
+    "test:e2e:mongo": "mocha --compilers js:babel-core/register --recursive ./src/baas/mongo/tests/e2e/*.js",
+    "test:unit": "npm run test:unit:redis"
   },
   "keywords": [],
   "author": "",
@@ -45,6 +48,7 @@
     "morgan": "^1.7.0",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
+    "supertest": "^2.0.1",
     "swagger-jsdoc": "^1.3.0"
   }
 }

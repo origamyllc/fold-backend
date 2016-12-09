@@ -12,6 +12,14 @@ const swaggerJSDoc = require('swagger-jsdoc');
 const swagger_spec = swaggerJSDoc(swagger_options);
 
 swagger_spec.paths["/collections"] = paths.collections;
-swagger_spec.definitions["response"]=  definitions.response;
+swagger_spec.paths["/{modelname}"] = paths.get_documents ;
+
+
+swagger_spec.definitions["docs"]=  definitions.docs;
+swagger_spec.definitions["message"]=  definitions.message;
+swagger_spec.definitions["responses"]=  definitions.responses;
+swagger_spec.definitions["not_found_error"]=  definitions.not_found_error;
+swagger_spec.definitions["collections"]=  definitions.default;
+swagger_spec.definitions["documents"]=  definitions.default;
 
 export const swaggerSpec = swagger_spec;

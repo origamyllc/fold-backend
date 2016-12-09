@@ -4,8 +4,8 @@ module.exports = {
     "version": "0.0.1",
     "title": "Fold-Mongo"
   },
-  "host": "localhost:10010",
-  "basePath": "/api/v1/mongo/",
+  "host": "localhost:9000",
+  "basePath": "/api/v1/mongo",
   "schemes": [
     "http",
     "https"

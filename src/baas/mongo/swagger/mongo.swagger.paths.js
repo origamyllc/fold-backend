@@ -7,23 +7,58 @@
         ],
         "responses": {
             "200": {
-                "description": "A list of mnogo collections.",
+                "description": "A list of mongo collections.",
                 "schema": {
-                    "$ref": "#/definitions/response"
+                    "$ref": "#/definitions/collections"
                 },
                 "examples": {
-                    "application/json": {
-                        "docs": [
-                            "permissions",
-                            "roles",
-                            "tokens",
-                            "users"
-                        ],
-                        "message": "sucessfully got collections"
-                    }
+                    "application/json": ' { "response": { "docs": [ "permissions","roles","tokens","users"], "message": "sucessfully got collections"}'
+                }
+            },
+            "404": {
+                "description": "unexpected error",
+                "schema": {
+                    "$ref": "#/definitions/not_found_error"
                 }
             }
         }
     }
 }
+
+
+ $paths.get_documents = {
+     "get": {
+         "description": "get documents for the given collection from mongodb",
+         "produces": [
+             "application/json"
+         ],
+         "parameters": [
+             {
+                 "name": "modelname",
+                 "in": "path",
+                 "required": true,
+                 "description": "The name of the collection to retrieve documents from ",
+                 "type": "string"
+             }
+         ],
+         "responses": {
+             "200": {
+                 "description": "A list of documents for the given collection",
+                 "schema": {
+                     "$ref": "#/definitions/documents"
+                 },
+                 "examples": {
+                     "application/json": '{ response": { "docs": [ { "_id": "58031b53ce85efc3fd5dd821", "username": "lisa2", "hashedPassword":"sJX8i7+EIsZUSHaIDYqprI1qz2lLmm9gXj6Rm1vY5RAE5LxMpc8dhHAFt2DjZD2Z0DCDwjqTY3di224uLVgYtw==", "__v": 0, "salt": "WwGMU72wfXmxrc6yCa9YFw==", "roles": ["57aec663adeceec90f543e19"], "email": "lisa1@cut.com" }],"message": "found data for collection user" }'
+                 }
+             },
+             "404": {
+                 "description": "unexpected error",
+                 "schema": {
+                     "$ref": "#/definitions/not_found_error"
+                 }
+             }
+         }
+     }
+ }
+
 export const paths = $paths;
