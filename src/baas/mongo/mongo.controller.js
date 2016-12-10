@@ -108,7 +108,7 @@ export function find(req, res) {
 
 export function show(req, res) {
     req.log.debug("found data for collection " + req.params.modelname);
-    MongoHelper.show(req)
+    MongoHelper.show(req.params.modelname)
         .then(
         (docs) => {
             if (docs && docs.length > 0 ) {
@@ -348,7 +348,7 @@ export function sorted_pagination (req, res) {
 
 export function get_by_id(req, res){
     req.log.debug("found  data for collection " + req.params.modelname + " for id " + req.params.id);
-    MongoHelper.getById(req).then( (docs)=> {
+    MongoHelper.getById(req.params.modelname,req.params.id).then( (docs)=> {
         if (docs && docs.length > 0 ) {
             req.log.info("found  data for collection " + req.params.modelname + " for id " + req.params.id);
             $res.send_success_response(res, {

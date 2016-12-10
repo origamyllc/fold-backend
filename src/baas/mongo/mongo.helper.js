@@ -44,17 +44,17 @@ export function find(req){
    });
 }
 
-export function show(req){
+export function show(modelname){
     return new Promise((resolve) => {
-        $mongo.engine.show(req.params.modelname).then( (docs) => {
+        $mongo.engine.show(modelname).then( (docs) => {
             resolve(docs);
         });
     });
 }
 
-export function getById(req){
+export function getById(modelname,id){
     return new Promise((resolve) => {
-        $mongo.engine.getById(req.params.modelname,req.params.id).then( (docs) => {
+        $mongo.engine.getById(modelname,id).then( (docs) => {
             resolve(docs);
         });
     });

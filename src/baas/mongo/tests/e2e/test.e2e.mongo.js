@@ -24,4 +24,54 @@ describe('1. it should be able to handle mongo ', () => {
                 done()
             });
     });
+
+    it('1.2 should get documents for the given collection ', (done) => {
+
+        b_agent
+            .get('/api/v1/mongo/user')
+            .end( (err, res) =>  {
+                if (err) return done(err)
+                expect(res.status).to.equal(200);
+                expect(res.body.response.docs.length).to.not.equal(0);
+                expect(res.body.response.message).to.equal('found data for collection user');
+                done()
+            });
+    });
+
+    it('1.3 should get documents for the given collection ', (done) => {
+
+        b_agent
+            .get('/api/v1/mongo/users')
+            .end( (err, res) =>  {
+                if (err) return done(err)
+                expect(res.status).to.equal(404);
+                done()
+            });
+    });
+
+    it('1.4 should get documents for the given collection using id ', (done) => {
+
+        b_agent
+            .get('/api/v1/mongo/user/58031b53ce85efc3fd5dd821')
+            .end( (err, res) =>  {
+                if (err) return done(err)
+                expect(res.status).to.equal(200);
+                expect(res.body.response.docs.length).to.not.equal(0);
+                expect(res.body.response.message).to.equal('found  data for collection user for id 58031b53ce85efc3fd5dd821');
+                done()
+            });
+    });
+
+    it('1.5 should throw error when getting documents for the given collection using id ', (done) => {
+
+        b_agent
+            .get('/api/v1/mongo/user/8031b53ce85efc3fd5dd21')
+            .end( (err, res) =>  {
+                if (err) return done(err)
+                expect(res.status).to.equal(404);
+                done()
+            });
+    });
+
+
 });

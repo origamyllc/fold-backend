@@ -13,7 +13,7 @@ const swagger_spec = swaggerJSDoc(swagger_options);
 
 swagger_spec.paths["/collections"] = paths.collections;
 swagger_spec.paths["/{modelname}"] = paths.get_documents ;
-
+swagger_spec.paths["/{modelname}/{id}"] =paths.get_documents_by_id
 
 swagger_spec.definitions["docs"]=  definitions.docs;
 swagger_spec.definitions["message"]=  definitions.message;
