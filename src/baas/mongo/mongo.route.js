@@ -17,9 +17,6 @@ mongo_router.get( FOLD_MONGO_URL + '/:modelname', mongo_controller.show);
 mongo_router.get( FOLD_MONGO_URL + '/:modelname/:id', mongo_controller.get_by_id);
 mongo_router.get( FOLD_MONGO_URL + '/:modelname/:field/:value', mongo_controller.find);
 
-mongo_router.get( FOLD_MONGO_URL + '/get/count/:modelname', mongo_controller.get_count);
-mongo_router.get( FOLD_MONGO_URL + '/get/count/:modelname/:field/:value', mongo_controller.get_filtered_count);
-
 // POST
 mongo_router.post( FOLD_MONGO_URL + '/:modelname', mongo_controller.insert);
 

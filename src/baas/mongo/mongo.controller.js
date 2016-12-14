@@ -7,7 +7,7 @@
 import { $res } from 'hulk-cut';
 import * as MongoHelper from './mongo.helper';
 import * as Errors from './mongo.errors';
-
+import * as Validator from './mongo.validate';
 
 export function get_docs(req,res){
     MongoHelper.get_docs(res);
@@ -55,20 +55,26 @@ export function get_collections(req, res) {
  */
 
 export function insert(req, res) {
-    req.log.debug("inserting data " + JSON.stringify(req.body) + "into collection " + req.params.modelname);
-    MongoHelper.insert(req).then((docs) => {
-        if (docs && !docs.errors ) {
-            req.log.info("sucessfully inserted data " + JSON.stringify(req.body) + "into collection " + req.params.modelname);
-            $res.send_success_response(res, {
-                response: {
-                    docs: req.body,
-                    message: "sucessfully inserted data into collection" + req.params.modelname
+   Validator.validate_set_body(req).then((isValid) => {
+       if (isValid && !isValid.details) {
+            req.log.debug("inserting data " + JSON.stringify(req.body) + "into collection " + req.params.modelname);
+            MongoHelper.insert(req.params.modelname, req.body).then((docs) => { console.log("======"); console.log(docs.errors)
+                if (docs && !docs.errors) {
+                    req.log.info("sucessfully inserted data " + JSON.stringify(req.body) + "into collection " + req.params.modelname);
+                    $res.send_success_response(res, {
+                        response: {
+                            docs: req.body,
+                            message: "sucessfully inserted data into collection" + req.params.modelname
+                        }
+                    })
+                } else {
+                    req.log.error(Errors.failed_to_insert);
+                    $res.send_internal_server_error(res, Errors.failed_to_insert);
                 }
-            })
-        } else {
-            req.log.error(Errors.failed_to_insert);
-            $res.send_internal_server_error(res, Errors.failed_to_insert);
+            });
         }
+    }).catch((error) => {
+        $res.send_internal_server_error(res,Errors.posted_body_is_not_valid);
     });
 }
 
@@ -81,7 +87,7 @@ export function insert(req, res) {
 export function find(req, res) {
     req.log.debug("finding data in collection " + req.params.modelname + " by field "
     + req.params.field + " with value " + req.params.value);
-    MongoHelper.find(req).then(
+    MongoHelper.find(req.params.modelname,req.params.field,req.params.value).then(
         (docs) => {
             if (docs  && docs.length > 0 ) {
                 req.log.info("found data in collection " + req.params.modelname + " by field "

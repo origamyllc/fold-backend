@@ -21,24 +21,22 @@ export function get_collections() {
     });
 }
 
-export function insert(req){
+export function insert(modelname, body){
     return new Promise((resolve) => {
-        $mongo.engine.insert(req.params.modelname, req.body).then(
+        $mongo.engine.insert(modelname, body).then(
             (docs) => {
              resolve(docs);
            });
        });
 }
 
-export function find(req){
-    let  key = req.params.field;
-    let value = req.params.value;
+export function find(modelname,key,value){
 
     let query = {};
     query[key]=value;
 
     return new Promise((resolve) => {
-        $mongo.engine.find(req.params.modelname, JSON.stringify(query)).then( (docs) => {
+        $mongo.engine.find(modelname, JSON.stringify(query)).then( (docs) => {
                 resolve(docs);
             });
    });

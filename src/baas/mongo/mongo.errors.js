@@ -6,3 +6,4 @@ export const failed_to_insert =  { details: { message : "failed to insert docume
 export const document_not_found =  { details: { message : "document not found",status:3202 }};
 export const documents_not_found =  { details: { message : "documents not found",status:3203 }};
 export const documents_can_not_updated =  { details: { message : "document can not be updated",status:3204 }};
+export const posted_body_is_not_valid =  { details: { message : "published body failed validation",status:3205 }};

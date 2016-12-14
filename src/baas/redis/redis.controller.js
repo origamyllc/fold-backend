@@ -48,7 +48,7 @@ export function setKeyValue(req, res) {
             }).catch((err) => {
                     req.log.error(err);
                     $res.send_internal_server_error(res,Errors.can_not_set_value);
-                });
+            });
         } else {
             $res.send_internal_server_error(res,Errors.posted_body_is_not_valid);
         }

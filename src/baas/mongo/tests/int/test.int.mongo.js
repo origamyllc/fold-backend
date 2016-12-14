@@ -98,4 +98,93 @@ describe(' 1. tests for Mongo api ', () => {
             });
     });
 
+    it('1.6 should get documents for the given collection using id ', (done) => {
+
+        app.get("/api/v1/mongo/:modelname/:field/:value", function(req, res){
+            req.log={"debug":function(){},"error":function(){},"info":function(){}}
+            controller.find(req, res);
+        });
+
+        agent
+            .get('/api/v1/mongo/user/username/lisa2')
+            .end( (err, res) =>  {
+                if (err) return done(err)
+                expect(res.status).to.equal(200);
+                expect(res.body.response.docs.length).to.not.equal(0);
+                expect(res.body.response.message).to.equal('found data in collection user by field username with value lisa2');
+                done()
+            });
+    });
+
+    it('1.7 should get documents for the given collection using id ', (done) => {
+
+        app.get("/api/v1/mongo/:modelname/:field/:value", function(req, res){
+            req.log={"debug":function(){},"error":function(){},"info":function(){}}
+            controller.find(req, res);
+        });
+
+        agent
+            .get('/api/v1/mongo/user/abc/xyz')
+            .end( (err, res) =>  {
+                if (err) return done(err)
+                expect(res.status).to.equal(404);
+                done()
+            });
+    });
+
+    it('1.8 should save the documents for the given collection', function (done) {
+
+        let user_stub = {
+                "username": "lista1",
+                "hashedPassword": "sJX8i7+EIsZUSHaIDYqprI1qz2lLmm9gXj6Rm1vY5RAE5LxMpc8dhHAFt2DjZD2Z0DCDwjqTY3di224uLVgYtw==",
+                "salt": "WwGMU72wfXmxrc6yCa9YFw==",
+                "roles": "57aec663adeceec90f543e19",
+                "email": "lista1@cut.com1"
+        }
+
+        app.post("/api/v1/mongo/:modelname", function(req, res){
+            req.log={"debug":function(){},"error":function(){},"info":function(){}}
+            controller.insert(req, res);
+        });
+
+        agent
+            .post('/api/v1/mongo/user')
+            .send(user_stub)
+            .end( (err, res) =>  {
+                if (err) return done(err)
+                expect(res.status).to.equal(200);
+                expect(res.body.response.docs.length).to.not.equal(0);
+                expect(res.body.response.message).to.equal('found data in collection user by field username with value lisa2');
+                done()
+            });
+
+        done();
+    });
+
+    it('1.9 should throw an error when the documents for the given collection fail to be inserted', function (done) {
+
+        let user_stub = {
+            "username": "lista1",
+            "hashedPassword": "sJX8i7+EIsZUSHaIDYqprI1qz2lLmm9gXj6Rm1vY5RAE5LxMpc8dhHAFt2DjZD2Z0DCDwjqTY3di224uLVgYtw==",
+            "salt": "WwGMU72wfXmxrc6yCa9YFw==",
+            "roles": "57aec663adeceec90f543e19"
+        }
+        app.post("/api/v1/mongo/:modelname", function(req, res){
+            req.log={"debug":function(){},"error":function(){},"info":function(){}}
+            controller.insert(req, res);
+        });
+
+        agent
+            .post('/api/v1/mongo/xyz')
+            .send(user_stub)
+            .end( (err, res) =>  {
+                if (err) return done(err)
+                expect(res.status).to.equal(404);
+                done()
+            });
+
+        done();
+    });
+
+
 });
