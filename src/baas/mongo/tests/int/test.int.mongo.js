@@ -44,8 +44,9 @@ describe(' 1. tests for Mongo api ', () => {
                 expect(res.status).to.equal(200);
                 expect(res.body.response.docs.length).to.not.equal(0);
                 expect(res.body.response.message).to.equal('found data for collection user');
-                done()
+
             });
+        done();
     });
 
     it('1.3 should throw error if collection does not exist ', (done) => {
@@ -106,12 +107,12 @@ describe(' 1. tests for Mongo api ', () => {
         });
 
         agent
-            .get('/api/v1/mongo/user/username/lisa2')
+            .get('/api/v1/mongo/user/username/lista')
             .end( (err, res) =>  {
                 if (err) return done(err)
                 expect(res.status).to.equal(200);
                 expect(res.body.response.docs.length).to.not.equal(0);
-                expect(res.body.response.message).to.equal('found data in collection user by field username with value lisa2');
+                expect(res.body.response.message).to.equal('found data in collection user by field username with value lista');
                 done()
             });
     });
@@ -186,5 +187,101 @@ describe(' 1. tests for Mongo api ', () => {
         done();
     });
 
+    it('1.10 should update the documents for the given collection by id', function (done) {
+        let user_stub = {
+            "username": "lista1"
+        }
+        app.post("/api/v1/mongo/:modelname/:id", function(req, res){
+            req.log={"debug":function(){},"error":function(){},"info":function(){}}
+            controller.update_by_id(req, res);
+        });
+
+        agent
+            .post('/api/v1/mongo/user/58031b53ce85efc3fd5dd821')
+            .send(user_stub)
+            .end( (err, res) =>  {
+                if (err) return done(err)
+                expect(res.status).to.equal(200);
+            });
+
+        done();
+    });
+
+    it('1.11 should throw an error when the documents for the given collection fail to be updated', function (done) {
+
+        let user_stub = {
+            "username": "lista1"
+        }
+        app.post("/api/v1/mongo/:modelname/:id", function (req, res) {
+            req.log = {
+                "debug": function () {},
+                "error": function () {},
+                "info": function () {}
+            }
+
+            controller.update_by_id(req, res);
+        });
+
+        agent
+            .post('/api/v1/mongo/xyz/58031b53ce85efc3fd5dd821')
+            .send(user_stub)
+            .end((err, res) => {
+                if (err) return done(err)
+                expect(res.status).to.equal(404);
+            });
+
+        done();
+    });
+
+
+    it('1.12 should update the documents for the given collection by field', function (done) {
+
+        let user_stub = {
+            "username": "lista1"
+        }
+        app.put("/api/v1/mongo/:modelname/:key/:value", function (req, res) {
+            req.log = {
+                "debug": function () {},
+                "error": function () {},
+                "info": function () {}
+            }
+
+            controller.update_by_id(req, res);
+        });
+
+        agent
+            .put('/api/v1/mongo/user/username/lisa')
+            .send(user_stub)
+            .end((err, res) => {
+                if (err) return done(err)
+                expect(res.status).to.equal(200);
+            });
+
+        done();
+    });
+
+    it('1.13 should throw an error when the documents for the given collection fail to be updated', function (done) {
+        let user_stub = {
+            "username": "lista1"
+        }
+        app.put("/api/v1/mongo/:modelname/:key/:value", function (req, res) {
+            req.log = {"debug": function () {},
+                "error": function () {},
+                "info": function () {}
+            }
+
+            controller.update_by_id(req, res);
+        });
+
+        agent
+            .put('/api/v1/mongo/xyz/username/lisa')
+            .send(user_stub)
+            .end((err, res) => {
+                if (err) return done(err)
+                expect(res.status).to.equal(404);
+            });
+
+        done();
+    });
 
 });

@@ -8,7 +8,6 @@ import  * as  mongo_controller from './mongo.controller';
 export const mongo_router = $router;
 const FOLD_MONGO_URL = '/api/v1/mongo';
 
-
 //GET
 mongo_router.get( FOLD_MONGO_URL + '/collections', mongo_controller.get_collections);
 mongo_router.get( FOLD_MONGO_URL + '/docs', mongo_controller.get_docs);
@@ -28,3 +27,11 @@ mongo_router.put( FOLD_MONGO_URL  + '/:modelname/:key/:value', mongo_controller.
 mongo_router.delete( FOLD_MONGO_URL + '/:modelname/:id', mongo_controller.delete_by_id);
 mongo_router.delete( FOLD_MONGO_URL + '/:modelname/:key/:value', mongo_controller.delete_by_field);
 
+//------ V2 --------
+//COUNT
+//PAGINATE
+//SORT
+
+// -------- V3 --------
+//MULTI-CONDITIONAL
+//BATCH

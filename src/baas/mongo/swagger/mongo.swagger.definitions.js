@@ -45,4 +45,15 @@ $definitions.not_found_error= {
     }
 }
 
+$definitions.internal_server_error = {
+    "properties" : {
+        "type": { "type": "string" },
+        "message":{ "$ref": "#/definitions/message" },
+        "details":{ "type": "object" },
+        "status": { "type": "number" },
+        "errorCode": { "type": "string" },
+        "isAppError": { "type": "boolean" }
+    }
+}
+
 export const definitions = $definitions;

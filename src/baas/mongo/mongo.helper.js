@@ -58,17 +58,17 @@ export function getById(modelname,id){
     });
 }
 
-export function updateById(req) {
+export function updateById(modelname,id,body) {
     return new Promise((resolve) => {
-        $mongo.engine.updateById(req.params.modelname,req.params.id,req.body).then( (docs) => {
+        $mongo.engine.updateById(modelname,id,body).then( (docs) => {
             resolve(docs);
         });
     });
 }
 
-export function updateByField(req) {
+export function updateByField(modelname,key,value,body) {
     return new Promise((resolve) => {
-        $mongo.engine.updateByField(req.params.modelname,req.params.key,req.params.value,req.body).then( (docs) => {
+        $mongo.engine.updateByField(modelname,key,value,body).then( (docs) => {
             resolve(docs);
         });
     });

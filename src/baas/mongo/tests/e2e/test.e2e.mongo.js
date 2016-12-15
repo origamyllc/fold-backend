@@ -137,4 +137,71 @@ describe('1. it should be able to handle mongo ', () => {
             });
         done();
     });
+
+    it('1.10 should update the documents for the given collection by id', function (done) {
+        let user_stub = {
+            "username": "lista1"
+        }
+
+        b_agent
+            .post('/api/v1/mongo/user/58031b53ce85efc3fd5dd821')
+            .send(user_stub)
+            .end( (err, res) =>  {
+                if (err) return done(err)
+                expect(res.status).to.equal(200);
+            });
+
+        done();
+    });
+
+    it('1.11 should throw an error when the documents for the given collection fail to be updated', function (done) {
+
+        let user_stub = {
+            "username": "lista1"
+        }
+
+        b_agent
+            .post('/api/v1/mongo/xyz/58031b53ce85efc3fd5dd821')
+            .send(user_stub)
+            .end((err, res) => {
+                if (err) return done(err)
+                expect(res.status).to.equal(404);
+            });
+
+        done();
+    });
+
+    it('1.12 should update the documents for the given collection by field', function (done) {
+
+        let user_stub = {
+            "username": "testing_stuff"
+        }
+
+        b_agent
+            .put('/api/v1/mongo/user/username/lisa2')
+            .send(user_stub)
+            .end((err, res) => {
+                if (err) return done(err)
+                expect(res.status).to.equal(200);
+            });
+
+        done();
+    });
+
+    it('1.13 should throw an error when the documents for the given collection fail to be updated', function (done) {
+        let user_stub = {
+            "username": "lista1"
+        }
+
+        b_agent
+            .put('/api/v1/mongo/xyz/userame/lisa')
+            .send(user_stub)
+            .end((err, res) => {
+                if (err) return done(err)
+                expect(res.status).to.equal(404);
+            });
+
+        done();
+    });
+
 });

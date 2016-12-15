@@ -58,7 +58,7 @@ export function insert(req, res) {
    Validator.validate_set_body(req).then((isValid) => {
        if (isValid && !isValid.details) {
             req.log.debug("inserting data " + JSON.stringify(req.body) + "into collection " + req.params.modelname);
-            MongoHelper.insert(req.params.modelname, req.body).then((docs) => { console.log("======"); console.log(docs.errors)
+            MongoHelper.insert(req.params.modelname, req.body).then((docs) => {
                 if (docs && !docs.errors) {
                     req.log.info("sucessfully inserted data " + JSON.stringify(req.body) + "into collection " + req.params.modelname);
                     $res.send_success_response(res, {
@@ -142,7 +142,7 @@ export function update_by_id(req, res) {
     req.log.debug("updating data for id " + req.params.id + " for collection "
     + req.params.modelname + "with body " + JSON.stringify(req.body));
 
-    MongoHelper.updateById(req)
+    MongoHelper.updateById(req.params.modelname,req.params.id,req.body)
         .then(
         (docs) => {
             if (docs) {
@@ -173,7 +173,7 @@ export function update_by_field(req, res) {
     req.log.debug("updating data for field  " + req.params.key + " with value " + req.params.value +
     " for collection " + req.params.modelname + "with body " + JSON.stringify(req.body));
 
-    MongoHelper.updateByField(req)
+    MongoHelper.updateByField(req.params.modelname,req.params.key,req.params.value,req.body)
         .then(
         (docs) => {
             if (docs) {
