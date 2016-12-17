@@ -2,11 +2,11 @@
  * Created by prashun on 7/26/16.
  */
 
-import { devConfig } from  '../config/env/dev.js'
-import { integrationConfig } from  '../config/env/int.js'
-import { productionConfig } from  '../config/env/prod.js'
-import { qaConfig } from  '../config/env/qa.js'
-import { stressConfig } from  '../config/env/stress.js'
+import { devConfig } from  '../config/env/dev.js';
+import { integrationConfig } from  '../config/env/int.js';
+import { productionConfig } from  '../config/env/prod.js';
+import { qaConfig } from  '../config/env/qa.js';
+import { stressConfig } from  '../config/env/stress.js';
 
 let config = devConfig;
 

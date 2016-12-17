@@ -11,42 +11,42 @@ describe('1. it should be able to handle redis ', () => {
         helper.setKeyValue('key',JSON.stringify({val:'value'})).then((obj) =>{
             expect(obj).to.equals( JSON.stringify({val:'value'}));
         });
-        done()
+        done();
     });
 
     it('1.2 should get value in redis', function(done) {
         helper.get('key').then((value) => {
             expect(value).to.equals('"{\\"val\\":\\"value\\"}"');
         });
-        done()
+        done();
     });
 
     it('1.3 should set multiple values in redis cache  ', function(done) {
         helper.setMulti(["key", "tests keys 1", "tests val 1", "tests keys 2", "tests val 2"]).then((value) => {
             expect(value).to.equals(true);
         });
-        done()
+        done();
     });
 
     it('1.4 should get multiple values from redis ', function(done) {
         helper.getMulti(["key","tests keys 1"]).then((val)=> {
             expect(val["key"]).to.equals(JSON.stringify({val:'value'}));
         });
-        done()
+        done();
     });
 
     it('1.5 should delete multiple values from redis ', function(done) {
         helper.del("key").then((val)=> {
             expect(val).to.equals("key");
         });
-        done()
+        done();
     });
 
     it('1.6 should clear redis', function(done) {
         helper.clear().then((val)=> {
             expect(val).to.equals(true);
         });
-        done()
+        done();
     });
 
 });

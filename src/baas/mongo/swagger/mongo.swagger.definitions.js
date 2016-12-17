@@ -20,7 +20,7 @@ $definitions.responses = {
             "$ref": "#/definitions/message"
         }
     }
-}
+};
 
 
 $definitions.docs={
@@ -28,11 +28,11 @@ $definitions.docs={
         "items": {
         "type": "object"
     }
-}
+};
 
 $definitions.message={
     "type": "string"
-}
+};
 
 $definitions.not_found_error= {
     "properties" : {
@@ -43,7 +43,7 @@ $definitions.not_found_error= {
         "errorCode": { "type": "string" },
         "isAppError": { "type": "boolean" }
     }
-}
+};
 
 $definitions.internal_server_error = {
     "properties" : {
@@ -54,6 +54,6 @@ $definitions.internal_server_error = {
         "errorCode": { "type": "string" },
         "isAppError": { "type": "boolean" }
     }
-}
+};
 
 export const definitions = $definitions;

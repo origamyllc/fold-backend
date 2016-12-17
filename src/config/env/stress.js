@@ -1,37 +1,36 @@
-/**
- * Created by prashun on 7/26/16.
- */
-export  const stressConfig = {
+export  default {
     NODE_ENV:'stress',
     mongo: 'mongodb://localhost/stress',
     redis: {
-        session :{
-            server: 'localhost',
-            secretKey: 'SeekQret-Cutstress',
-            prefix: 'sess-dev',
-            port: 6379,
-            db: 0
-        },
-        db : {
+        options: {
             server: 'localhost',
             secretKey: 'SeekQret-CutStress',
             port: 6379,
             db: 1
         }
     },
-    rabbit: {
-        host: 'localhost'
-        , port: 5672
-        , login: 'guest'
-        , password: 'guest'
-        , connectionTimeout: 10000
-        , authMechanism: 'AMQPLAIN'
-        , vhost: '/'
-        , noDelay: true
-        , ssl: { enabled : false
+    rabbitmq: {
+        options: {
+            host: 'localhost'
+            , port: 5672
+            , login: 'guest'
+            , password: 'guest'
+            , connectionTimeout: 10000
+            , authMechanism: 'AMQPLAIN'
+            , vhost: '/'
+            , noDelay: true
+            , ssl: {
+                enabled: false
+            }
         }
     },
     express:{
         port:9000
+    },
+    lru: {
+        options: {
+            max: 500,
+            maxAge: 1000 * 60 * 60
+        }
     }
-}
+};

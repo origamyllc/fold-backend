@@ -66,7 +66,7 @@ export function validate_create_body(req){
                     .then(validate_queues)
                     .then(validate_queue_bindings)
                     .then( () => {
-                       resolve(true)
+                       resolve(true);
                     });
             }
             else{

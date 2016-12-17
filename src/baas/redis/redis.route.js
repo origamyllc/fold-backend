@@ -6,7 +6,7 @@
 
 
 import { $router,$auth } from 'hulk-cut';
-import  * as  redisController from './redis.controller'
+import  * as  redisController from './redis.controller';
 
 export const redis_router = $router;
 const FOLD_REDIS_CACHE_URL = '/api/v1/redis';

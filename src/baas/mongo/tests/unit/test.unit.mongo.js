@@ -1,6 +1,5 @@
-/**
- * Created by prashun on 12/7/16.
- */
+'use strict';
+
 // index.js
 var path = require('path');
 global.appRoot = process.cwd();
@@ -14,7 +13,7 @@ describe('1. tests for Mongo api ', () => {
         helper.get_collections().then((collections) => {
             expect(collections.length).to.not.equals(0);
         });
-        done()
+        done();
     });
 
     it('1.2 should return the documents if the collection extists',(done) => {
@@ -67,7 +66,7 @@ describe('1. tests for Mongo api ', () => {
             "salt": "WwGMU72wfXmxrc6yCa9YFw==",
             "roles": "57aec663adeceec90f543e19",
             "email": "lista1@cut.com1"
-        }
+        };
 
         helper.insert('user', user_stub).then(function (collections) {
             expect(collections.length).to.not.equals(0);
@@ -83,7 +82,7 @@ describe('1. tests for Mongo api ', () => {
             "salt": "WwGMU72wfXmxrc6yCa9YFw==",
             "roles": "57aec663adeceec90f543e19",
             "email": "lista1@cut.com1"
-        }
+        };
 
         helper.insert('user', user_stub).then(function (collections) {
             expect(collections.message).to.equals('user validation failed');
@@ -95,7 +94,7 @@ describe('1. tests for Mongo api ', () => {
 
         let user_stub = {
             "username": "lisa2"
-        }
+        };
 
         helper.updateById('user','58031b53ce85efc3fd5dd821', user_stub).then(function (collections) {
             expect(collections.length).to.not.equals(0);
@@ -108,7 +107,7 @@ describe('1. tests for Mongo api ', () => {
 
         let user_stub = {
             "username": "lista1"
-        }
+        };
 
          helper.updateById('user','58031b5ce85efc3fd5dd821', user_stub).then(function (collections) {
              expect(collections.ok).to.equals(0);
@@ -121,7 +120,7 @@ describe('1. tests for Mongo api ', () => {
 
         let user_stub = {
             "username": "lisa"
-        }
+        };
 
         helper.updateByField('user','username','lisa4', user_stub).then(function (collections) {
             expect(collections.length).to.not.equals(0);
@@ -134,10 +133,38 @@ describe('1. tests for Mongo api ', () => {
 
         let user_stub = {
             "username": "lista1"
-        }
+        };
 
        helper.updateByField('xyz','username','lisa', user_stub).then(function (collections) {
            expect(collections.ok).to.equals(0);
+        });
+        done();
+    });
+
+    it('1.14 should delete the documents from the collection by id',(done) => {
+        helper.delById('user','5852cce5c4e91a50fd84dee9').then((collections) => {
+            expect(collections.result.n).to.equals(1);
+        });
+        done();
+    });
+
+    it('1.15 should throw error if the document does not exist',(done) => {
+        helper.delById('xyz','58031b53ce85efc3fd5dd8').then((collections) => {
+            expect(collections).not.to.be.defined;
+        });
+        done();
+    });
+
+    it('1.16 should delete the documents from the collection by field',(done) => {
+        helper.delByField('user','username','lista1').then((collections) => {
+            expect(collections.result.n).to.equals(1);
+        });
+        done();
+    });
+
+    it('1.17 should throw error if the document does not exist',(done) => {
+        helper.delByField('xyz','username','lisa2').then((collections) => {
+            expect(collections).not.to.be.defined;
         });
         done();
     });

@@ -58,7 +58,7 @@ export function init(req, res) {
                         .catch((err) => {
                             req.log.error(err);
                             $res.send_not_found_error(res, err);
-                        })
+                        });
                 });
                 $res.send_success_response(res, {
                     response: {
@@ -142,7 +142,7 @@ export function subscribe(req,res){
 function createExchange(req){
     return new Promise((resolve,reject) => {
         req.body.exchanges.forEach((exchange) => {
-            req.log.debug( `creating  exchange ${exchange.name} created `)
+            req.log.debug( `creating  exchange ${exchange.name} created `);
             RabbitHelper.createExchange(exchange.name,exchange.options)
                 .then((exchanges) => {
                     req.log.info( ` exchanges created `);

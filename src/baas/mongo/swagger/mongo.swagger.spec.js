@@ -16,4 +16,4 @@ module.exports = {
   "produces": [
     "application/json"
   ]
-}
+};

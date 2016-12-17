@@ -30,7 +30,7 @@ $paths.collections = {
         }
 
     }
-}
+};
 
 
 $paths.get_documents = {
@@ -116,7 +116,7 @@ $paths.get_documents = {
             }
         }
     }
-}
+};
 
 $paths.get_documents_by_id = {
     "get": {
@@ -202,7 +202,49 @@ $paths.get_documents_by_id = {
                 }
             },
             "404": {
-                "description": "unexpected error",
+                "description": "not found error",
+                "schema": {
+                    "$ref": "#/definitions/not_found_error"
+                }
+            },
+            "500": {
+                "description": "internal_server_error",
+                "schema": {
+                    "$ref": "#/definitions/internal_server_error"
+                }
+            }
+        }
+    },
+    "delete": {
+        "description": "delete document for the given collection by id from mongodb",
+        "produces": [
+            "application/json"
+        ],
+        "parameters": [
+            {
+                "name": "modelname",
+                "in": "path",
+                "required": true,
+                "description": "The name of the collection to retrieve documents from ",
+                "type": "string"
+            },
+            {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "description": "The id of the document to be retrieved",
+                "type": "string"
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "Successfully deleted documents for the given collection",
+                "schema": {
+                    "$ref": "#/definitions/documents"
+                }
+            },
+            "404": {
+                "description": "not found error",
                 "schema": {
                     "$ref": "#/definitions/not_found_error"
                 }
@@ -219,7 +261,7 @@ $paths.get_documents_by_id = {
 
 $paths.get_documents_by_field = {
     "get": {
-        "description": "get document for the given collection by id from mongodb",
+        "description": "get document for the given collection by field from mongodb",
         "produces": ["application/json"],
         "parameters": [{
             "name": "modelname",
@@ -308,7 +350,50 @@ $paths.get_documents_by_field = {
                 }
             },
             "404": {
-                "description": "unexpected error",
+                "description": "not found error",
+                "schema": {
+                    "$ref": "#/definitions/not_found_error"
+                }
+            },
+            "500": {
+                "description": "internal_server_error",
+                "schema": {
+                    "$ref": "#/definitions/internal_server_error"
+                }
+            }
+        }
+    },
+    "delete": {
+        "description": "delete document for the given collection by field from mongodb",
+        "produces": ["application/json"],
+        "parameters": [{
+            "name": "modelname",
+            "in": "path",
+            "required": true,
+            "description": "The name of the collection to retrieve documents from ",
+            "type": "string"
+        }, {
+            "name": "field",
+            "in": "path",
+            "required": true,
+            "description": "The field by which to query the collection",
+            "type": "string"
+        }, {
+            "name": "value",
+            "in": "path",
+            "required": true,
+            "description": "The value for the field by which to query the collection",
+            "type": "string"
+        }],
+        "responses": {
+            "200": {
+                "description": "Successfully deleted documents for the given collection",
+                "schema": {
+                    "$ref": "#/definitions/documents"
+                }
+            },
+            "404": {
+                "description": "not found error",
                 "schema": {
                     "$ref": "#/definitions/not_found_error"
                 }

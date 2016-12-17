@@ -66,7 +66,7 @@ export function insert(req, res) {
                             docs: req.body,
                             message: "sucessfully inserted data into collection" + req.params.modelname
                         }
-                    })
+                    });
                 } else {
                     req.log.error(Errors.failed_to_insert);
                     $res.send_internal_server_error(res, Errors.failed_to_insert);
@@ -203,9 +203,9 @@ export function update_by_field(req, res) {
 
 export function delete_by_id (req, res) {
     req.log.debug("deleting data for id " + req.params.id + " for collection " + req.params.modelname);
-    MongoHelper.delById(req).then(
+    MongoHelper.delById(req.params.modelname,req.params.id).then(
         (docs) => {
-        if (! docs) {
+        if (docs.result.n === 1) {
 
             req.log.info(" deleted data for id " + req.params.id + " for collection " + req.params.modelname);
             $res.send_success_response(res, {
@@ -231,7 +231,7 @@ export function delete_by_field (req, res) {
     req.log.debug(" deleting data for field  " + req.params.key + " with value " + req.params.value +
     " for collection " + req.params.modelname );
 
-    MongoHelper.delByField (req).then( (error) => {
+    MongoHelper.delByField (req.params.modelname,req.params.key,req.params.value).then( (error) => {
         if(error){
             $res.send_not_found_error(res, '');
         } else {

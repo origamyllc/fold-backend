@@ -21,7 +21,7 @@ export function get(req, res) {
             RedisHelper.get(req.params.key).then((value) => {
                 if (value) {
                     req.log.info(`Got value ${value} for key  ${req.params.key} from redis`);
-                    $res.send_success_response(res, {response: {"value": value}})
+                    $res.send_success_response(res, {response: {"value": value}});
                 } else {
                     $res.send_internal_server_error(res, Errors.can_not_get_value);
                 }
@@ -118,7 +118,7 @@ export function mget(req, res) {
             req.log.debug(`Getting value for key ${req.params.key}  from Redis`);
             RedisHelper.getMulti(req.params.key).then((values) => {
                 req.log.info(`Got value ${values} for key  ${req.params.key} from redis`);
-                $res.send_success_response(res, {response: {"value": values}})
+                $res.send_success_response(res, {response: {"value": values}});
             }).catch((err) => {
                 req.log.error(err);
                 $res.send_internal_server_error(res, Errors.can_not_set_value);

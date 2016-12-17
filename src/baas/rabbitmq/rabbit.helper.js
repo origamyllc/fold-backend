@@ -16,7 +16,7 @@ import Promise from 'bluebird';
 export function createExchange(name, options) {
    return  new Promise((resolve) => {
         $pubsub.rabbit.createExchange(name, options).then((exchanges) => {
-            resolve(exchanges)
+            resolve(exchanges);
         });
     });
 }
@@ -59,7 +59,7 @@ export function bind(_exchanges,_queues){
 export function publish(queue_name, body){
     return  new Promise((resolve) => {
         $pubsub.rabbit.publish(queue_name,body).then((body) =>{
-            resolve(body)
+            resolve(body);
         });
     });
 }
